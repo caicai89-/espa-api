@@ -655,6 +655,11 @@ class ProductionProvider(ProductionProviderInterfaceV0):
                 note = 'auxiliary data unavailable for' \
                        'this scenes acquisition date'
                 logger.info('check ee unavailable: {}'.format(product.__dict__))
+            # All EE orders are for collections generated before 12/23/2016 are not ready right now
+            if product.l1gen_restricted():
+                status = 'unavailable'
+                note = 'Collections generated before 12/23/2016 are not valid'
+                logger.info('check ee unavailable: {}'.format(product.__dict__))
 
             scene_dict = {'name': product.product_id,
                           'sensor_type': sensor_type,
