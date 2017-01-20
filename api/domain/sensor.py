@@ -271,6 +271,7 @@ class Landsat(SensorProduct):
             self.correction_level = _idlist[1]
             self.collection_number = _idlist[-2]
             self.collection_category = _idlist[-1]
+            self.level1_gen_jul = _idlist[-3][:4] + julian_from_date(_idlist[-3][:4], _idlist[-3][4:6], _idlist[-3][6:8])
         else:
             self.path = product_id[3:6].lstrip('0')
             self.row = product_id[6:9].lstrip('0')
@@ -285,6 +286,13 @@ class Landsat(SensorProduct):
     def sr_date_restricted(self):
         if self.sensor_name in restricted:
             if not julian_date_check(self.julian, restricted[self.sensor_name]['by_date']['sr']):
+                return True
+        return False
+
+    def l1gen_restricted(self):
+        if hasattr(self, 'collection_category'):
+            # Cannot order Collections Products created before 12/23/2016
+            if not julian_date_check(self.level1_gen_jul, ['> 2016358']):
                 return True
         return False
 
