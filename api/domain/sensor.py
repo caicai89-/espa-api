@@ -271,7 +271,7 @@ class Landsat(SensorProduct):
             self.correction_level = _idlist[1]
             self.collection_number = _idlist[-2]
             self.collection_category = _idlist[-1]
-            self.level1_gen_jul = _idlist[-3][:4] + julian_from_date(_idlist[-3][:4], _idlist[-3][4:6], _idlist[-3][6:8])
+            self.level1_gen_jul = _idlist[-3][:4] + julian_from_date(_idlist[-3][:4], _idlist[-3][4:6], _idlist[-3][6:8]).zfill(3)
         else:
             self.path = product_id[3:6].lstrip('0')
             self.row = product_id[6:9].lstrip('0')
