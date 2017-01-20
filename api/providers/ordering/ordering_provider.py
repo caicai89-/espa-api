@@ -92,6 +92,15 @@ class OrderingProvider(ProviderInterfaceV0):
                             else:
                                 upd['date_restricted'][prod] = [sc_id]
 
+            for prod in outs:
+                for sc_id in ins:
+                    if obj.l1gen_restricted():
+                        remove_me.append(prod)
+                        if prod in upd['date_restricted']:
+                            upd['date_restricted'][prod].append(sc_id)
+                        else:
+                            upd['date_restricted'][prod] = [sc_id]
+
             for rem in remove_me:
                 try:
                     outs.remove(rem)
