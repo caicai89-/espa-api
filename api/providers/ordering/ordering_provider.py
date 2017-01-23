@@ -94,6 +94,7 @@ class OrderingProvider(ProviderInterfaceV0):
 
             for prod in outs:
                 for sc_id in ins:
+                    obj = sensor.instance(sc_id)
                     if obj.l1gen_restricted():
                         remove_me.append(prod)
                         if prod in upd['date_restricted']:
