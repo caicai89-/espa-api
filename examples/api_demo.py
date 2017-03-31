@@ -1,99 +1,91 @@
-# API DEMO code from 24 August 2016 talk at EROS
-#
-# Official documentation:
-# ESPA - http://espa.cr.usgs.gov/
-# ESPA API - https://github.com/USGS-EROS/espa-api/
-# ESPA ODI - http://landsat.usgs.gov/documents/espa_odi_userguide.pdf
-# Product Information - http://landsat.usgs.gov/CDR_ECV.php
-#
-# Provided as is
+"""
+# ESPA-API DEMO code
 
-# Standard Python Libraries
-import urllib
-import urllib2
+Since many of our services written in python also interact with the API, we have
+this example as a quick run-through which should hopefully get anyone started
+towards building their own simple python services capable of interacting
+with ESPA.
+
+## Official documentation:
+
+* See the [ESPA API Source Code](https://github.com/USGS-EROS/espa-api/)
+* Visit the [ESPA On-Demand Interface](https://espa.cr.usgs.gov)
+
+### WARNING! _This example is only provided as is._
+To build this page, simply run:
+
+    pycco examples/api_demo.py
+
+
+Alternatively, you can run this file directly, like so:
+
+    python examples/api_demo.py
+
+"""
+
+# ## Dependencies
+# We will use the [requests](http://docs.python-requests.org/en/master/)
+# library, although similar operations are available through the
+# [Standard Python Libraries](https://docs.python.org/2/library/internet.html)
+import requests
 import json
 import getpass
-import base64
 
-# Easier to read outputs
-from pprint import pprint
+# The current URL hosting the ESPA interfaces has reached a stable version 1.0
+host = 'https://espa.cr.usgs.gov/api/v1/'
 
-# Setup some basic parameters
-host = 'https://espa.cr.usgs.gov'
+# ESPA uses the ERS credentials for identifying users
 username = 'earth_explorer_username'
 password = getpass.getpass()
 
 
-# Create a simple method for interacting with the API
-def api_request(endpoint, data=None):
+# ## api_request: A Function
+# First and foremost, define a simple function for interacting with the API
+def api_request(endpoint, verb='get', json=None, uauth=None):
     """
-    Simple method to handle calls to a REST API that uses JSON
-
-    args:
-        endpoint - API endpoint URL
-        data - Python dictionary to send as JSON to the API
-
-    returns:
-        Python dictionary representation of the API response
+    Here we can see how easy it is to handle calls to a REST API that uses JSON
     """
-    if data:
-        data = json.dumps(data)
-
-    request = urllib2.Request(host + endpoint, data=data)
-
-    base64string = (base64
-                    .encodestring('%s:%s' % (username, password))
-                    .replace('\n', ''))
-    request.add_header("Authorization", "Basic %s" % base64string)
-
-    try:
-        result = urllib2.urlopen(request)
-    except urllib2.HTTPError as e:
-        result = e
-
-    return json.loads(result.read())
+    auth_tup = uauth if uauth else (username, password)
+    response = getattr(requests, verb)(host + endpoint, auth=auth_tup, json=json)
+    return response.json()
 
 
-# #######################################
+# ## General Interactions
 # Basic call to get the current user's information
-# #######################################
 print('GET /api/v1/user')
-resp = api_request('/api/v1/user')
-pprint(resp)
+resp = api_request('user')
+print(json.dumps(resp, indent=4))
 
-# #######################################
 # Call to demonstrate what is returned from available-products
-# #######################################
-print('POST /api/v1/available-products')
-avail_list = {'inputs': ['LE70290302003123EDC00',
-                         'MOD09A1.A2000073.h12v11.005.2008238080250.hdf',
+print('GET /api/v1/available-products')
+avail_list = {'inputs': ['LE07_L1TP_029030_20170221_20170319_01_T1',
+                         'MOD09A1.A2017073.h10v04.006.2017082160945.hdf',
                          'bad_scene_id']}
 
-resp = api_request('/api/v1/available-products', avail_list)
+resp = api_request('available-products', verb='post', json=avail_list)
+print(json.dumps(resp, indent=4))
 
-pprint(resp)
-
-# #######################################
 # Call to show projection parameters that are accepted
-# #######################################
 print('GET /api/v1/projections')
-projs = api_request('/api/v1/projections')
+projs = api_request('projections')
 
 print projs.keys()
-pprint(projs['utm']['properties'])
+print(json.dumps(projs['utm']['properties'], indent=4))
 
-# #######################################
-# Step through one way to build and place an order into the system
-# #######################################
+# ## Building An Order
+# Step through one way to build and place an order into the system. Here, let's
+# use two different Landsat sensors to build up an order
 print('POST /api/v1/order')
-ls = ['LC80250362014152LGN00', 'LC80260352014143LGN00', 'LC80260362014143LGN00',
-      'LE70260352014135EDC00', 'LE70260362014151EDC00', 'LE70250362014144EDC00',
-      'LT50260352007140PAC01', 'LT50260362007140PAC01', 'LT50250362007149PAC01']
+l8_ls = ['LC08_L1TP_029030_20161109_20170219_01_T1',
+         'LC08_L1TP_029030_20160821_20170222_01_T1',
+         'LC08_L1TP_029030_20130712_20170309_01_T1']
+l7_ls =['LE07_L1TP_029030_20170221_20170319_01_T1',
+        'LE07_L1TP_029030_20161101_20161127_01_T1',
+        'LE07_L1TP_029030_20130602_20160908_01_T1']
 
 # Differing products across the sensors
-l5_prods = ['sr', 'toa', 'cloud']
 l7_prods = ['toa', 'bt']
-l8_prods = ['toa']
+l8_prods = ['sr']
 
 # Standard Albers CONUS
 projection = {'aea': {'standard_parallel_1': 29.5,
@@ -105,37 +97,40 @@ projection = {'aea': {'standard_parallel_1': 29.5,
                       'datum': 'nad83'}}
 
 # Let available-products place the acquisitions under their respective sensors
-order = api_request('/api/v1/available-products', {'inputs': ls})
-pprint(order)
+ls = l8_ls + l7_ls
+order = api_request('available-products', verb='post', json=dict(inputs=ls))
+print(json.dumps(order, indent=4))
 
 # Replace the available products that was returned with what we want
-order['etm7']['products'] = l7_prods
-order['tm5']['products'] = l5_prods
-order['olitirs8']['products'] = l8_prods
+for sensor in order.keys():
+    if isinstance(order[sensor], dict) and order[sensor].get('inputs'):
+        if set(l7_ls) & set(order[sensor]['inputs']):
+            order[sensor]['products'] = l7_prods
+        if set(l8_ls) & set(order[sensor]['inputs']):
+            order[sensor]['products'] = l8_prods
 
 # Add in the rest of the order information
 order['projection'] = projection
 order['format'] = 'gtiff'
 order['resampling_method'] = 'cc'
-order['note'] = 'API Demo Live!!'
+order['note'] = 'API Demo Python!!'
 
 # Notice how it has changed from the original call available-products
-pprint(order)
+print(json.dumps(order, indent=4))
 
 # Place the order
-resp = api_request('/api/v1/order', data=order)
-pprint(resp)
+resp = api_request('order', verb='post', json=order)
+print(json.dumps(resp, indent=4))
 orderid = resp['orderid']
 
-# #######################################
+# ## Check the status of an order
 # Check on an order and get the download url's for completed scenes
-# #######################################
 print('GET /api/v1/item-status/')
-resp = api_request('/api/v1/item-status/{0}'.format(orderid)
-resp
+resp = api_request('item-status/{0}'.format(orderid))
+print(json.dumps(resp, indent=4))
 
-pprint(resp['orderid'][orderid])
+print(json.dumps(resp['orderid'][orderid]))
 
-# set orderid to a completed or partially completed order to get the download url's
+# Once the order is completed or partially completed, can get the download url's
 for item in resp['orderid'][orderid]:
-    pprint(item.get('product_dload_url'))
+    print(item.get('product_dload_url'))
