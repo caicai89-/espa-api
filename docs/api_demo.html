@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>api_demo.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>api_demo.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h1>ESPA-API DEMO code</h1>
+<p>Since many of our services written in python also interact with the API, we have
+this example as a quick run-through which should hopefully get anyone started
+towards building their own simple python services capable of interacting
+with ESPA.</p>
+<h2>Official documentation:</h2>
+<ul>
+<li>See the <a href="https://github.com/USGS-EROS/espa-api/">ESPA API Source Code</a></li>
+<li>Visit the <a href="https://espa.cr.usgs.gov">ESPA On-Demand Interface</a></li>
+</ul>
+<h3>WARNING! <em>This example is only provided as is.</em></h3>
+<p>To build this page, simply run:</p>
+<pre><code>pycco examples/api_demo.py
+</code></pre>
+<p>Alternatively, you can run this file directly, like so:</p>
+<pre><code>python examples/api_demo.py
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <h2>Dependencies</h2>
+<p>We will use the <a href="http://docs.python-requests.org/en/master/">requests</a>
+library, although similar operations are available through the
+<a href="https://docs.python.org/2/library/internet.html">Standard Python Libraries</a></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">getpass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>The current URL hosting the ESPA interfaces has reached a stable version 1.0</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;https://espa.cr.usgs.gov/api/v1/&#39;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>ESPA uses the ERS credentials for identifying users</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">username</span> <span class="o">=</span> <span class="s1">&#39;earth_explorer_username&#39;</span>
+<span class="n">password</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <h2>api_request: A Function</h2>
+<p>First and foremost, define a simple function for interacting with the API</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">api_request</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">verb</span><span class="o">=</span><span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">uauth</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Here we can see how easy it is to handle calls to a REST API that uses JSON</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">auth_tup</span> <span class="o">=</span> <span class="n">uauth</span> <span class="k">if</span> <span class="n">uauth</span> <span class="k">else</span> <span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">requests</span><span class="p">,</span> <span class="n">verb</span><span class="p">)(</span><span class="n">host</span> <span class="o">+</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth_tup</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <h2>General Interactions</h2>
+<p>Basic call to get the current user's information</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s1">&#39;GET /api/v1/user&#39;</span><span class="p">)</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">api_request</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Call to demonstrate what is returned from available-products</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s1">&#39;GET /api/v1/available-products&#39;</span><span class="p">)</span>
+<span class="n">avail_list</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;LE07_L1TP_029030_20170221_20170319_01_T1&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;MOD09A1.A2017073.h10v04.006.2017082160945.hdf&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;bad_scene_id&#39;</span><span class="p">]}</span>
+
+<span class="n">resp</span> <span class="o">=</span> <span class="n">api_request</span><span class="p">(</span><span class="s1">&#39;available-products&#39;</span><span class="p">,</span> <span class="n">verb</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">avail_list</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Call to show projection parameters that are accepted</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s1">&#39;GET /api/v1/projections&#39;</span><span class="p">)</span>
+<span class="n">projs</span> <span class="o">=</span> <span class="n">api_request</span><span class="p">(</span><span class="s1">&#39;projections&#39;</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="n">projs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">projs</span><span class="p">[</span><span class="s1">&#39;utm&#39;</span><span class="p">][</span><span class="s1">&#39;properties&#39;</span><span class="p">],</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <h2>Building An Order</h2>
+<p>Step through one way to build and place an order into the system. Here, let's
+use two different Landsat sensors to build up an order</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s1">&#39;POST /api/v1/order&#39;</span><span class="p">)</span>
+<span class="n">l8_ls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LC08_L1TP_029030_20161109_20170219_01_T1&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;LC08_L1TP_029030_20160821_20170222_01_T1&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;LC08_L1TP_029030_20130712_20170309_01_T1&#39;</span><span class="p">]</span>
+<span class="n">l7_ls</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;LE07_L1TP_029030_20170221_20170319_01_T1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;LE07_L1TP_029030_20161101_20161127_01_T1&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;LE07_L1TP_029030_20130602_20160908_01_T1&#39;</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>Differing products across the sensors</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">l7_prods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;toa&#39;</span><span class="p">,</span> <span class="s1">&#39;bt&#39;</span><span class="p">]</span>
+<span class="n">l8_prods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sr&#39;</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>Standard Albers CONUS</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">projection</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;aea&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;standard_parallel_1&#39;</span><span class="p">:</span> <span class="mf">29.5</span><span class="p">,</span>
+                      <span class="s1">&#39;standard_parallel_2&#39;</span><span class="p">:</span> <span class="mf">45.5</span><span class="p">,</span>
+                      <span class="s1">&#39;central_meridian&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">96.0</span><span class="p">,</span>
+                      <span class="s1">&#39;latitude_of_origin&#39;</span><span class="p">:</span> <span class="mf">23.0</span><span class="p">,</span>
+                      <span class="s1">&#39;false_easting&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                      <span class="s1">&#39;false_northing&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                      <span class="s1">&#39;datum&#39;</span><span class="p">:</span> <span class="s1">&#39;nad83&#39;</span><span class="p">}}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Let available-products place the acquisitions under their respective sensors</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">ls</span> <span class="o">=</span> <span class="n">l8_ls</span> <span class="o">+</span> <span class="n">l7_ls</span>
+<span class="n">order</span> <span class="o">=</span> <span class="n">api_request</span><span class="p">(</span><span class="s1">&#39;available-products&#39;</span><span class="p">,</span> <span class="n">verb</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">ls</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Replace the available products that was returned with what we want</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">for</span> <span class="n">sensor</span> <span class="ow">in</span> <span class="n">order</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">order</span><span class="p">[</span><span class="n">sensor</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">order</span><span class="p">[</span><span class="n">sensor</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;inputs&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">l7_ls</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">order</span><span class="p">[</span><span class="n">sensor</span><span class="p">][</span><span class="s1">&#39;inputs&#39;</span><span class="p">]):</span>
+            <span class="n">order</span><span class="p">[</span><span class="n">sensor</span><span class="p">][</span><span class="s1">&#39;products&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">l7_prods</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">l8_ls</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">order</span><span class="p">[</span><span class="n">sensor</span><span class="p">][</span><span class="s1">&#39;inputs&#39;</span><span class="p">]):</span>
+            <span class="n">order</span><span class="p">[</span><span class="n">sensor</span><span class="p">][</span><span class="s1">&#39;products&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">l8_prods</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>Add in the rest of the order information</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">order</span><span class="p">[</span><span class="s1">&#39;projection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projection</span>
+<span class="n">order</span><span class="p">[</span><span class="s1">&#39;format&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;gtiff&#39;</span>
+<span class="n">order</span><span class="p">[</span><span class="s1">&#39;resampling_method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;cc&#39;</span>
+<span class="n">order</span><span class="p">[</span><span class="s1">&#39;note&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;API Demo Python!!&#39;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>Notice how it has changed from the original call available-products</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>Place the order</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">resp</span> <span class="o">=</span> <span class="n">api_request</span><span class="p">(</span><span class="s1">&#39;order&#39;</span><span class="p">,</span> <span class="n">verb</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">orderid</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="s1">&#39;orderid&#39;</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <h2>Check the status of an order</h2>
+<p>Check on an order and get the download url's for completed scenes</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s1">&#39;GET /api/v1/item-status/&#39;</span><span class="p">)</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">api_request</span><span class="p">(</span><span class="s1">&#39;item-status/{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">orderid</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="s1">&#39;orderid&#39;</span><span class="p">][</span><span class="n">orderid</span><span class="p">]))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>Once the order is completed or partially completed, can get the download url's</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">[</span><span class="s1">&#39;orderid&#39;</span><span class="p">][</span><span class="n">orderid</span><span class="p">]:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;product_dload_url&#39;</span><span class="p">))</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
