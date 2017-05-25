@@ -116,29 +116,29 @@ class LTAService(object):
         return self._request(endpoint, data, verb='post')
 
     # Formatting wrappers on resource endpoints ================================
+    def login(self):
+        """
+        Authenticates the user-agent and returns an API Key
+
+        :return: str
+        """
+        endpoint = 'login'
+        payload = dict(username=self.agent, password=self.agent_wurd,
+                       authType='EROS')
+        resp = self._post(endpoint, payload)
+        return resp.get('data')
+
     def available(self):
         """
         Checks the LTA API status endpoint and compares an expected API version
 
         :return: bool
         """
-        data = self._get('status')
-        if data:
-            return self.api_version == data.get('api_version')
-
-    def login(self, username, password):
-        """
-        Authenticates the user and returns an API Key
-
-        :param username: USGS registration username
-        :param password: USGS registration password
-        :return: str
-        """
         endpoint = 'login'
-        payload = dict(username=username, password=password, authType='EROS')
+        payload = dict(username=self.agent, password=self.agent_wurd,
+                       authType='EROS')
         resp = self._post(endpoint, payload)
-        self.token = resp.get('data')
-        self.current_user = username
+        return self.api_version == resp.get('api_version')
 
     def logout(self):
         """
