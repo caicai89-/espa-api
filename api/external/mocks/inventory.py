@@ -6,6 +6,12 @@ RESOURCE_DEF = {
         "data": "9ccf44a1c7e74d7f94769956b54cd889",
         "api_version": "1.2.1"
     },
+    'logout': {
+        "errorCode": None,
+        "error": "",
+        "data": True,
+        "api_version": "1.2.1"
+    },
     'idLookup': {
         "errorCode": None,
         "error": "",
