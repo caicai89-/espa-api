@@ -156,6 +156,54 @@ class LTAService(object):
         else:
             raise LTAError('{} logout failed'.format(self.current_user))
 
+    @staticmethod
+    def split_by_dataset(product_ids):
+        """
+        Subset list of Collection IDs (LC08_...) by the LTA JSON data set name
+
+        :param product_ids: Landsat Collection IDs ['LC08_..', ...]
+        :type product_ids: list
+        :return: dict
+        """
+        retdata = dict()
+        instances = [sensor.instance(p) for p in product_ids]
+        sensors = set([s.lta_json_name for s in instances])
+        for s_name in sensors:
+            retdata[s_name] = [s.product_id for s in instances
+                               if s.lta_json_name == s_name]
+        return retdata
+
+    def id_lookup(self, product_ids):
+        """
+        Convert Collection IDs (LC08_...) into M2M entity IDs
+
+        :param product_ids: Landsat Collection IDs ['LC08_..', ...]
+        :type product_ids: list
+        :return: dict
+        """
+        dataset_groups = self.split_by_dataset(product_ids)
+        endpoint = 'idLookup'
+        retdata = dict()
+        for sensor_name in dataset_groups:
+            id_list = dataset_groups[sensor_name]
+            payload = dict(apiKey=self.token,
+                           idList=id_list,
+                           inputField='displayId', datasetName=sensor_name)
+            resp = self._get(endpoint, payload)
+            results = resp.get('data')
+            if not isinstance(results, dict):
+                raise LTAError('{} ID Lookup failed: {}'
+                               .format(sensor_name, product_ids))
+            diff = set(product_ids) - set(results.keys())
+            if diff:
+                raise LTAError('ID Lookup failed for: {}'.format(diff))
+            else:
+                entity_ids = {k: results.get(k).get('entityId')
+                              for k in id_list}
+                retdata.update(entity_ids)
+        return retdata
+
+
     def fields(self, dataset=''):
         """
         Returns the metadata filter field list for the specified dataset
@@ -334,3 +382,7 @@ def available():
 
 def logout(token):
     return LTAService(token).logout()
+
+
+def convert(token, product_ids):
+    return LTAService(token).id_lookup(product_ids)
