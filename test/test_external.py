@@ -111,6 +111,10 @@ class TestInventory(unittest.TestCase):
     def test_api_login(self):
         token = inventory.get_session()
 
+    @patch('api.external.inventory.requests.post', mockinventory.login)
+    def test_api_available(self):
+        self.assertTrue(inventory.available())
+
 
 class TestNLAPS(unittest.TestCase):
     """
