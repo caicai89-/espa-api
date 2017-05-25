@@ -102,7 +102,9 @@ class TestInventory(unittest.TestCase):
     Provide testing for the EarthExplorer JSON API (Machine-2-Machine)
     """
     def setUp(self):
-        pass
+        self.collection_ids = ['LC08_L1TP_156063_20170207_20170216_01_T1',
+                               'LE07_L1TP_028028_20130510_20160908_01_T1',
+                               'LT05_L1TP_032028_20120425_20160830_01_T1']
 
     def tearDown(self):
         pass
@@ -117,6 +119,13 @@ class TestInventory(unittest.TestCase):
     @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_api_available(self):
         self.assertTrue(inventory.available())
+
+    @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
+    def test_api_id_lookup(self):
+        token = inventory.get_session()
+        entity_ids = inventory.convert(token, self.collection_ids)
+        self.assertEqual(set(self.collection_ids), set(entity_ids))
 
 
 class TestNLAPS(unittest.TestCase):
