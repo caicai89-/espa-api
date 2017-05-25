@@ -53,6 +53,16 @@ class LTAService(object):
             self.token = None
             self.current_user = None
 
+    @property
+    def base_url(self):
+        return self._base_url
+
+    @base_url.setter
+    def base_url(self, value):
+        if not isinstance(value, basestring):
+            raise TypeError('LTAService base_url must be string')
+        self._base_url = value
+
     @staticmethod
     def _parse(response):
         """
