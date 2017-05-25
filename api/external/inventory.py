@@ -38,12 +38,14 @@ class LTAError(Exception):
 #      https://earthexplorer.usgs.gov/inventory/documentation/json-api         |
 class LTAService(object):
     def __init__(self):
-        self.base_url = (config.url_for('earthexplorer.json') or
-                         'https://earthexplorer.usgs.gov/inventory/json/')
-        self.node = 'EE'  # EarthExplorer
+        self.base_url = config.url_for('earthexplorer.json')
+        mode = config.mode
+        self.api_version = config.get('bulk.{0}.json.version'.format(mode))
+        self.agent = config.get('bulk.{0}.json.username'.format(mode))
+        self.agent_wurd = config.get('bulk.{0}.json.password'.format(mode))
         self.current_user = None
-        self.api_version = '1.2.1'  # FIXME: Should this be a config.get()?
         self.token = None
+        self.node = 'EE'  # EarthExplorer
 
     def __del__(self):
         if self.current_user:
