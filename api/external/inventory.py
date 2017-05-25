@@ -37,14 +37,14 @@ class LTAError(Exception):
 # Find Documentation here:                                                     |
 #      https://earthexplorer.usgs.gov/inventory/documentation/json-api         |
 class LTAService(object):
-    def __init__(self):
+    def __init__(self, token=None):
         self.base_url = config.url_for('earthexplorer.json')
         mode = config.mode
         self.api_version = config.get('bulk.{0}.json.version'.format(mode))
         self.agent = config.get('bulk.{0}.json.username'.format(mode))
         self.agent_wurd = config.get('bulk.{0}.json.password'.format(mode))
         self.current_user = None
-        self.token = None
+        self.token = token
         self.node = 'EE'  # EarthExplorer
 
     def __del__(self):
@@ -330,3 +330,7 @@ def get_session():
 
 def available():
     return LTAService().available()
+
+
+def logout(token):
+    return LTAService(token).logout()
