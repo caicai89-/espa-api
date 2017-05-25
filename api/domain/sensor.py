@@ -313,7 +313,7 @@ class LandsatTM(Landsat):
                 "sr_ndvi", "sr_evi", "sr_savi", "sr_msavi", "sr_ndmi", "sr_nbr",
                 "sr_nbr2", "stats"]
     lta_name = 'LANDSAT_TM'
-    lta_json_name = 'LANDSAT_TM_C1'  # FIXME: Hard coded "C1"
+    lta_json_name = 'LANDSAT_TM_C1'
     sensor_name = 'tm'
 
     def __init__(self, product_id):
@@ -326,7 +326,7 @@ class LandsatETM(Landsat):
                 "sr_ndvi", "sr_evi", "sr_savi", "sr_msavi", "sr_ndmi", "sr_nbr",
                 "sr_nbr2", "stats"]
     lta_name = 'LANDSAT_ETM_PLUS'
-    lta_json_name = 'LANDSAT_ETM_C1'  # FIXME: Hard coded "C1"
+    lta_json_name = 'LANDSAT_ETM_C1'
     sensor_name = 'etm'
 
     def __init__(self, product_id):
@@ -339,7 +339,7 @@ class LandsatOLITIRS(Landsat):
                 "sr_ndvi", "sr_evi", "sr_savi", "sr_msavi", "sr_ndmi", "sr_nbr",
                 "sr_nbr2", "stats"]
     lta_name = 'LANDSAT_8'
-    lta_json_name = 'LANDSAT_8'  # FIXME: See, this is how it should be
+    lta_json_name = 'LANDSAT_8_C1'
     sensor_name = 'olitirs'
 
     def __init__(self, product_id):
@@ -350,7 +350,7 @@ class LandsatOLI(Landsat):
     """Models Landsat OLI only products"""
     products = ["source_metadata", "l1", "toa", "stats"]
     lta_name = 'LANDSAT_8'
-    lta_json_name = 'LANDSAT_8'  # FIXME: See, this is how it should be
+    lta_json_name = 'LANDSAT_8_C1'
     sensor_name = 'oli'
 
     def __init__(self, product_id):
@@ -360,7 +360,7 @@ class LandsatOLI(Landsat):
 class LandsatTIRS(Landsat):
     """Models Landsat TIRS only products"""
     lta_name = 'LANDSAT_8'
-    lta_json_name = 'LANDSAT_8'  # FIXME: See, this is how it should be
+    lta_json_name = 'LANDSAT_8_C1'
     sensor_name = 'tirs'
 
     def __init__(self, product_id):
