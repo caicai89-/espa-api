@@ -126,6 +126,12 @@ class TestInventory(unittest.TestCase):
         entity_ids = inventory.convert(self.token, self.collection_ids)
         self.assertEqual(set(self.collection_ids), set(entity_ids))
 
+    @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    def test_api_validation(self):
+        expected = {k: True for k in self.collection_ids}
+        results = inventory.verify_scenes(self.token, self.collection_ids)
+        self.assertItemsEqual(expected, results)
+
 
 class TestNLAPS(unittest.TestCase):
     """
