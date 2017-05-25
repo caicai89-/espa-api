@@ -39,12 +39,19 @@ RESOURCE_DEF = {
 
 class RequestsSpoof(object):
     def __init__(self, *args, **kwargs):
-        url = args[0]
-        resource = url.split('/')[-1]
+        self.url = args[0]
+        self.resource = self.url.split('/')[-1]
 
         self.ok = True
-        self.data = RESOURCE_DEF.get(resource)
+        self.data = RESOURCE_DEF.get(self.resource)
         self.content = str(self.data)
+
+    def __repr__(self):
+        message = ('REQUEST SPOOF'
+                   '\n\tURL: {}'
+                   '\n\tRESOURCE: {}'
+                   '\n\tDATA:{}').format(self.url, self.resource, self.data)
+        return message
 
     def json(self):
         return self.data
