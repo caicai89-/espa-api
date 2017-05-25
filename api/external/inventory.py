@@ -316,3 +316,15 @@ class LTAScenes(object):
             res = self.grab_scene_metadata(sid)
             search_res[sid] = res[-1].get('dataAccessUrl')
         return search_res
+
+
+''' This is the public interface that calling code should use to interact
+    with this module'''
+
+
+def get_session():
+    return LTAService().login()
+
+
+def available():
+    return LTAService().available()
