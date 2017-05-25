@@ -1,40 +1,51 @@
 
+RESOURCE_DEF = {
+    'login': {
+        "errorCode": None,
+        "error": "",
+        "data": "9ccf44a1c7e74d7f94769956b54cd889",
+        "api_version": "1.2.1"
+    },
+    'idLookup': {
+        "errorCode": None,
+        "error": "",
+        "data": {
+            "LC08_L1TP_156063_20170207_20170216_01_T1": {
+                "entityId": "LC81560632017038LGN00",
+                "dispalyId": "LC08_L1TP_156063_20170207_20170216_01_T1",
+                "orderingId": "LC81560632017038LGN00",
+            },
+            "LE07_L1TP_028028_20130510_20160908_01_T1": {
+                "entityId": "LE70280282013130EDC00",
+                "dispalyId": "LE07_L1TP_028028_20130510_20160908_01_T1",
+                "orderingId": "LE70280282013130EDC00",
+            },
+            "LT05_L1TP_032028_20120425_20160830_01_T1" : {
+                    "entityId": "LT50320282012116EDC00",
+                    "dispalyId": "LT05_L1TP_032028_20120425_20160830_01_T1",
+                    "orderingId": "LT50320282012116EDC00",
+            },
+            "INVALID_ID": None
+        }
+    },
+}
+
+
 class RequestsSpoof(object):
     def __init__(self, *args, **kwargs):
+        url = args[0]
+        resource = url.split('/')[-1]
+
         self.ok = True
-        self.content = str(self.json())
+        self.data = RESOURCE_DEF.get(resource)
+        self.content = str(self.data)
 
     def json(self):
-        return dict()
+        return self.data
 
+    def raise_for_status(self):
+        pass
 
-class idLookup(RequestsSpoof):
-    def __init__(self, *args, **kwargs):
-        super(idLookup, self).__init__(*args, **kwargs)
-
-    def json(self):
-        return {
-            "errorCode": None,
-            "error": "",
-            "data": {
-                "LC08_L1TP_156063_20170207_20170216_01_T1": {
-                    "entityId": "LC81560632017038LGN00",
-                    "dispalyId": "LC08_L1TP_156063_20170207_20170216_01_T1",
-                    "orderingId": "LC81560632017038LGN00",
-                },
-                "LE07_L1TP_028028_20130510_20160908_01_T1": {
-                    "entityId": "LE70280282013130EDC00",
-                    "dispalyId": "LE07_L1TP_028028_20130510_20160908_01_T1",
-                    "orderingId": "LE70280282013130EDC00",
-                },
-                "LT05_L1TP_032028_20120425_20160830_01_T1" : {
-                        "entityId": "LT50320282012116EDC00",
-                        "dispalyId": "LT05_L1TP_032028_20120425_20160830_01_T1",
-                        "orderingId": "LT50320282012116EDC00",
-                },
-                "INVALID_ID": None
-            }
-        }
 
 
 class sceneMetadata(RequestsSpoof):
@@ -112,17 +123,4 @@ class download(RequestsSpoof):
             "node": "EE",
             "entityIds": ["LC80130292014100LGN00"],
             "products": ["STANDARD"]
-        }
-
-
-class login(RequestsSpoof):
-    def __init__(self, *args, **kwargs):
-        super(login, self).__init__(*args, **kwargs)
-
-    def json(self):
-        return {
-            "errorCode": None,
-            "error": "",
-            "data": "9ccf44a1c7e74d7f94769956b54cd889",
-            "api_version": "1.2.1"
         }
