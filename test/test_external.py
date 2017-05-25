@@ -132,6 +132,17 @@ class TestInventory(unittest.TestCase):
         results = inventory.verify_scenes(self.token, self.collection_ids)
         self.assertItemsEqual(expected, results)
 
+    @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    def test_api_get_download_urls(self):
+        results = inventory.get_download_urls(self.token, self.collection_ids)
+        self.assertIsInstance(results, dict)
+        ehost, ihost = 'invalid.com', '127.0.0.1'
+        results = {k:v.replace(ehost, ihost) for k,v in results.items()}
+        self.assertEqual(set(self.collection_ids), set(results))
+        ip_address_host_regex = 'http://\d+\.\d+\.\d+\.\d+/.*\.tar\.gz'
+        for pid in self.collection_ids:
+            self.assertRegexpMatches(results.get(pid), ip_address_host_regex)
+
 
 class TestNLAPS(unittest.TestCase):
     """
