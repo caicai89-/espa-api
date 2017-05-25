@@ -3,7 +3,7 @@ RESOURCE_DEF = {
     'login': {
         "errorCode": None,
         "error": "",
-        "data": "9ccf44a1c7e74d7f94769956b54cd889",
+        "data": "1a878e81fd8e4d63a05f69024f9b36b5",
         "api_version": "1.2.1"
     },
     'logout': {
@@ -33,6 +33,16 @@ RESOURCE_DEF = {
             },
             "INVALID_ID": None
         }
+    },
+    'download': {
+        "errorCode": None,
+        "error": "",
+        "data": [
+            "http://invalid.com/path/to/downloads/l1/2014/013/029/LC81560632017038LGN00.tar.gz?iid=LC81560632017038LGN00&amp;did=63173803&amp;ver="
+            "http://invalid.com/path/to/downloads/l1/2014/013/029/LE70280282013130EDC00.tar.gz?iid=LE70280282013130EDC00&amp;did=63173803&amp;ver="
+            "http://invalid.com/path/to/downloads/l1/2014/013/029/LT50320282012116EDC00.tar.gz?iid=LT50320282012116EDC00&amp;did=63173803&amp;ver="
+        ],
+        "api_version": "1.2.1"
     },
 }
 
