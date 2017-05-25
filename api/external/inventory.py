@@ -47,6 +47,10 @@ class LTAService(object):
         self.token = token
         self.node = 'EE'  # EarthExplorer
 
+        # FIXME: what is the correct download location? using zero-index a.t.m.
+        self.ehost = config.url_for('external_cache')
+        self.ihost = config.url_for('internal_cache').split(',')[0]
+
     def __del__(self):
         if self.current_user:
             self.logout()
@@ -218,6 +222,41 @@ class LTAService(object):
 
         results = {k: k in entity_ids.keys() for k in product_ids}
         return results
+
+    def get_download_urls(self, product_ids, products='STANDARD'):
+        """
+        Fetch the download location for supplied IDs, replacing the public host
+            with an internal network host (to bypass public firewall routing)
+
+        :param product_ids: Landsat Collection IDs ['LC08_..', ...]
+        :type product_ids: list
+        :param products: download type to grab (STANDARD is for L1-GeoTIFF)
+        :type products: str
+        :return: dict
+        """
+        dataset_groups = self.split_by_dataset(product_ids)
+        entity_ids = self.id_lookup(product_ids)
+        endpoint = 'download'
+
+        retdata = dict()
+        for sensor_name in dataset_groups:
+            id_list = dataset_groups[sensor_name]
+            ents = [entity_ids.get(i) for i in id_list]
+            payload = dict(apiKey=self.token, datasetName=sensor_name,
+                           products=products, node=self.node, entityIds=ents)
+            resp = self._get(endpoint, payload)
+            results = resp.get('data')
+            if not isinstance(results, list):
+                raise LTAError('{} failed fetch download urls: {}'
+                               .format(sensor_name, product_ids))
+            urls = {i: [r.replace(self.ehost, self.ihost) for r in results
+                        if entity_ids.get(i) in r].pop() for i in id_list}
+            diff = set(id_list) - set(urls)
+            if diff:
+                raise LTAError('No download urls found for: {}'.format(diff))
+            else:
+                retdata.update(urls)
+        return retdata
 
     def fields(self, dataset=''):
         """
@@ -405,3 +444,7 @@ def convert(token, product_ids):
 
 def verify_scenes(token, product_ids):
     return LTAService(token).verify_scenes(product_ids)
+
+
+def get_download_urls(token, product_ids):
+    return LTAService(token).get_download_urls(product_ids)
