@@ -17,15 +17,20 @@ class idLookup(RequestsSpoof):
             "errorCode": None,
             "error": "",
             "data": {
-                "LT08_L1GT_042036_20130309_20170310_01_T2": {
-                    "entityId": "LT80420362013068LGN02",
-                    "dispalyId": "LT08_L1GT_042036_20130309_20170310_01_T2",
-                    "orderingId": "LT80420362013068LGN02",
-            },
-                "LT08_L1GT_042030_20130309_20170310_01_T2" : {
-                        "entityId": "LT80420302013068LGN02",
-                        "dispalyId": "LT08_L1GT_042030_20130309_20170310_01_T2",
-                        "orderingId": "LT80420302013068LGN02",
+                "LC08_L1TP_156063_20170207_20170216_01_T1": {
+                    "entityId": "LC81560632017038LGN00",
+                    "dispalyId": "LC08_L1TP_156063_20170207_20170216_01_T1",
+                    "orderingId": "LC81560632017038LGN00",
+                },
+                "LE07_L1TP_028028_20130510_20160908_01_T1": {
+                    "entityId": "LE70280282013130EDC00",
+                    "dispalyId": "LE07_L1TP_028028_20130510_20160908_01_T1",
+                    "orderingId": "LE70280282013130EDC00",
+                },
+                "LT05_L1TP_032028_20120425_20160830_01_T1" : {
+                        "entityId": "LT50320282012116EDC00",
+                        "dispalyId": "LT05_L1TP_032028_20120425_20160830_01_T1",
+                        "orderingId": "LT50320282012116EDC00",
                 },
                 "INVALID_ID": None
             }
