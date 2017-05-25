@@ -203,6 +203,21 @@ class LTAService(object):
                 retdata.update(entity_ids)
         return retdata
 
+    def verify_scenes(self, product_ids):
+        """
+        Check if supplied IDs successfully mapped to M2M entity IDs
+
+        :param product_ids: Landsat Collection IDs ['LC08_..', ...]
+        :type product_ids: list
+        :return: dict
+        """
+        entity_ids = self.id_lookup(product_ids)
+        diff = set(product_ids) - set(entity_ids)
+        if diff:
+            raise LTAError('Verify scenes failed for: {}'.format(diff))
+
+        results = {k: k in entity_ids.keys() for k in product_ids}
+        return results
 
     def fields(self, dataset=''):
         """
@@ -386,3 +401,7 @@ def logout(token):
 
 def convert(token, product_ids):
     return LTAService(token).id_lookup(product_ids)
+
+
+def verify_scenes(token, product_ids):
+    return LTAService(token).verify_scenes(product_ids)
