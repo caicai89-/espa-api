@@ -72,19 +72,20 @@ class LTAService(object):
         :param response: requests.models.Response
         :return: dict
         """
-        data = dict()
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise LTAError('server reported bad status code: {}'
+                           .format(e))
         try:
             data = response.json()
-        except Exception:  # FIXME: be more specific
-            msg = ('unable to parse JSON response.\n'
-                   'traceback:\n{}'.format(traceback.format_exc()))
+        except ValueError as e:
+            msg = ('unable to parse JSON response. {}\n'
+                   'traceback:\n{}'.format(e, traceback.format_exc()))
             raise LTAError(msg)
 
-        if not response.ok:
-            raise LTAError('bad request: {}\nerror:{}'
-                           .format(response.status_code, data.get('error')))
         if data.get('error'):
-            raise LTAError('error returned: {}'.format(data.get('error')))
+            raise LTAError('{errorCode}: {error}'.format(**data))
         if 'data' not in data:
             raise LTAError('no data found:\n{}'.format(data))
 
@@ -100,12 +101,13 @@ class LTAService(object):
         :return:
         """
         url = self.base_url + endpoint
-        logger.debug('{verb} {url}:\n{payload}'
-                     .format(verb=verb.upper(), url=url, payload=data))
-        # FIXME: why is this necessary? ========================================
-        request = url + '?jsonRequest={}'.format(urllib.quote(json.dumps(data)))
-        response = getattr(requests, verb)(request)
-        # ======================================================================
+        if data:
+            data = {'jsonRequest': json.dumps(data)}
+        logger.debug('{verb} {url}'.format(verb=verb.upper(), url=url))
+        if 'password' not in str(data):
+            logger.debug('Payload: {}'.format(data))
+        # Note: using `data=` (to force form-encoded params)
+        response = getattr(requests, verb)(url, data=data)
         logger.debug('RESPONSE:{}\n{}'.format(response, response.content))
         return self._parse(response)
 
