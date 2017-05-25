@@ -3,7 +3,7 @@ RESOURCE_DEF = {
     'login': {
         "errorCode": None,
         "error": "",
-        "data": "1a878e81fd8e4d63a05f69024f9b36b5",
+        "data": "2fd976601eef1ebd632b545a8fef11a3",
         "api_version": "1.2.1"
     },
     'logout': {

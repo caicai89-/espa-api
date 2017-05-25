@@ -102,7 +102,7 @@ class TestInventory(unittest.TestCase):
     Provide testing for the EarthExplorer JSON API (Machine-2-Machine)
     """
     def setUp(self):
-        self.token = '9ccf44a1c7e74d7f94769956b54cd889'
+        self.token = '2fd976601eef1ebd632b545a8fef11a3'
         self.collection_ids = ['LC08_L1TP_156063_20170207_20170216_01_T1',
                                'LE07_L1TP_028028_20130510_20160908_01_T1',
                                'LT05_L1TP_032028_20120425_20160830_01_T1']
