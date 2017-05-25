@@ -107,10 +107,12 @@ class TestInventory(unittest.TestCase):
     def tearDown(self):
         pass
 
+    @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
     @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_api_login(self):
         token = inventory.get_session()
         self.assertIsInstance(token, basestring)
+        self.assertTrue(inventory.logout(token))
 
     @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_api_available(self):
