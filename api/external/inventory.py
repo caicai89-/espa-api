@@ -194,7 +194,7 @@ class LTAService(object):
             if not isinstance(results, dict):
                 raise LTAError('{} ID Lookup failed: {}'
                                .format(sensor_name, product_ids))
-            diff = set(product_ids) - set(results.keys())
+            diff = set(id_list) - set(results.keys())
             if diff:
                 raise LTAError('ID Lookup failed for: {}'.format(diff))
             else:
