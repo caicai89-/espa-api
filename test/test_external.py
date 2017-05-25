@@ -110,6 +110,7 @@ class TestInventory(unittest.TestCase):
     @patch('api.external.inventory.requests.post', mockinventory.login)
     def test_api_login(self):
         token = inventory.get_session()
+        self.assertIsInstance(token, basestring)
 
     @patch('api.external.inventory.requests.post', mockinventory.login)
     def test_api_available(self):
