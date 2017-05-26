@@ -373,6 +373,20 @@ class LTACachedService(LTAService):
         if not success:
             raise LTAError('Token not cached')
 
+    def get_lookup(self, id_list):
+        cache_keys = [self.MD_KEY_FMT.format(resource='idLookup', id=i)
+                      for i in id_list]
+        entries = self.cache.get_multi(cache_keys)
+        entries = {k.split(',')[1][:-1]: v for k, v in entries.items()}
+        return entries
+
+    def set_lookup(self, id_pairs):
+        cache_entries = {self.MD_KEY_FMT.format(resource='idLookup', id=i): e
+                         for i, e in id_pairs.items()}
+        success = self.cache.set_multi(cache_entries)
+        if not success:
+            raise LTAError('ID conversion not cached')
+
     # ---------------------------------------------------------------+
     # Handlers to balance fetching cached/external values as needed  |
     def cached_login(self):
@@ -381,6 +395,19 @@ class LTACachedService(LTAService):
             token = self.login()
             self.set_login(token)
         return token
+
+    def cached_id_lookup(self, id_list):
+        entities = self.get_lookup(id_list)
+        if len(entities) > 0:
+            diff = set(id_list) - set(entities)
+            if diff:
+                fetched = self.id_lookup(list(diff))
+                self.set_lookup(entities)
+                entities.update(fetched)
+        else:
+            entities = self.id_lookup(id_list)
+            self.set_lookup(entities)
+        return entities
 
 
 class LTAUser(object):
@@ -525,3 +552,7 @@ def clear_user_context(token):
 
 def get_cached_session():
     return LTACachedService().cached_login()
+
+
+def get_cached_convert(token, product_ids):
+    return LTACachedService(token).cached_id_lookup(product_ids)
