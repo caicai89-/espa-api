@@ -48,6 +48,11 @@ RESOURCE_DEF = {
         "errorCode": None,
         "error": "",
         "data": True
+    },
+    'clearUserContext': {
+        "errorCode": None,
+        "error": "",
+        "data": True
     }
 }
 
