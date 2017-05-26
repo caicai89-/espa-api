@@ -191,6 +191,7 @@ class TestCachedInventory(unittest.TestCase):
                                'LT05_L1TP_032028_20120425_20160830_01_T1']
         _ = inventory.get_cached_convert(self.token, self.collection_ids)
         _ = inventory.get_cached_verify_scenes(self.token, self.collection_ids)
+        _ = inventory.get_cached_download_urls(self.token, self.collection_ids)
 
     def tearDown(self):
         pass
@@ -212,6 +213,18 @@ class TestCachedInventory(unittest.TestCase):
         expected = {k: True for k in self.collection_ids}
         results = inventory.get_cached_verify_scenes(self.token, self.collection_ids)
         self.assertItemsEqual(expected, results)
+
+    @patch('api.external.inventory.requests.get', mockinventory.CachedRequestPreventionSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.CachedRequestPreventionSpoof)
+    def test_api_get_download_urls(self):
+        results = inventory.get_cached_download_urls(self.token, self.collection_ids)
+        self.assertIsInstance(results, dict)
+        ehost, ihost = 'invalid.com', '127.0.0.1'
+        results = {k:v.replace(ehost, ihost) for k,v in results.items()}
+        self.assertEqual(set(self.collection_ids), set(results))
+        ip_address_host_regex = 'http://\d+\.\d+\.\d+\.\d+/.*\.tar\.gz'
+        for pid in self.collection_ids:
+            self.assertRegexpMatches(results.get(pid), ip_address_host_regex)
 
 
 class TestNLAPS(unittest.TestCase):
