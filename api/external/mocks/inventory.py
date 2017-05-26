@@ -106,3 +106,10 @@ class BadRequestSpoofNegative(RequestsSpoof):
 class CachedRequestPreventionSpoof(object):
     def __init__(self, *args, **kwargs):
         raise RuntimeError('Should only require Cached values!')
+
+
+# ----------------------------------------+
+# Production API testing                  |
+def get_cached_download_urls(product_list):
+    response = {i: 'http://one_time_use.tar.gz' for i in product_list}
+    return response
