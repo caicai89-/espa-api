@@ -1,3 +1,4 @@
+import copy
 
 RESOURCE_DEF = {
     'login': {
@@ -83,6 +84,7 @@ class RequestsSpoof(object):
 class BadRequestSpoofError(RequestsSpoof):
     def __init__(self, *args, **kwargs):
         super(BadRequestSpoofError, self).__init__(*args, **kwargs)
+        self.data = copy.deepcopy(self.data)
 
         if 'data' in self.data:
             self.data['data'] = None
