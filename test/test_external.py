@@ -106,6 +106,7 @@ class TestInventory(unittest.TestCase):
         self.collection_ids = ['LC08_L1TP_156063_20170207_20170216_01_T1',
                                'LE07_L1TP_028028_20130510_20160908_01_T1',
                                'LT05_L1TP_032028_20120425_20160830_01_T1']
+        self.contact_id = 0
 
     def tearDown(self):
         pass
@@ -142,6 +143,12 @@ class TestInventory(unittest.TestCase):
         ip_address_host_regex = 'http://\d+\.\d+\.\d+\.\d+/.*\.tar\.gz'
         for pid in self.collection_ids:
             self.assertRegexpMatches(results.get(pid), ip_address_host_regex)
+
+    @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    def test_set_user_context(self):
+        success = inventory.set_user_context(self.token, self.contact_id)
+        self.assertTrue(success)
+
 
 
 class TestNLAPS(unittest.TestCase):
