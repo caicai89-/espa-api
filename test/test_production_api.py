@@ -236,13 +236,9 @@ class TestProductionAPI(unittest.TestCase):
 
     @patch('api.providers.production.production_provider.ProductionProvider.send_initial_emails',
            mock_production_provider.respond_true)
-    @patch('api.providers.production.production_provider.ProductionProvider.handle_onorder_landsat_products',
-           mock_production_provider.respond_true)
     @patch('api.providers.production.production_provider.ProductionProvider.handle_retry_products',
            mock_production_provider.respond_true)
     @patch('api.providers.production.production_provider.ProductionProvider.load_ee_orders',
-           mock_production_provider.respond_true)
-    @patch('api.providers.production.production_provider.ProductionProvider.handle_submitted_products',
            mock_production_provider.respond_true)
     @patch('api.providers.production.production_provider.ProductionProvider.finalize_orders',
            mock_production_provider.respond_true)
@@ -341,6 +337,7 @@ class TestProductionAPI(unittest.TestCase):
         self.assertTrue(production_provider.handle_submitted_plot_products())
         self.assertEqual(Scene.find(plot_id).status, "oncache")
 
+    @patch('os.path.exists', lambda y: True)
     @patch('os.path.getsize', lambda y: 999)
     def test_production_calc_scene_download_sizes(self):
         order = Order.find(self.mock_order.generate_testing_order(self.user_id))
