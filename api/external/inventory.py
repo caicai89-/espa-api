@@ -258,6 +258,23 @@ class LTAService(object):
                 retdata.update(urls)
         return retdata
 
+    def set_user_context(self, contactid, ipaddress=None, context='ESPA'):
+        """
+        This method will set the end-user context for all subsequent requests.
+
+        :param contactid: ERS identification key (number form
+        :type contactid: int
+        :param ipaddress: Originating IP Address
+        :param context: Usage statistics that are executed via 'M2M_APP' users
+        :return: bool
+        """
+        endpoint = 'userContext'
+        payload = dict(apiKey=self.token, contactId=int(contactid),
+                       ipAddress=ipaddress, applicationContext=context)
+        resp = self._get(endpoint, payload)
+        return bool(resp.get('data'))
+
+
     def fields(self, dataset=''):
         """
         Returns the metadata filter field list for the specified dataset
@@ -448,3 +465,6 @@ def verify_scenes(token, product_ids):
 
 def get_download_urls(token, product_ids):
     return LTAService(token).get_download_urls(product_ids)
+
+def set_user_context(token, contactid, ipaddress=None):
+    return LTAService(token).set_user_context(contactid, ipaddress)
