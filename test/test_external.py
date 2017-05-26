@@ -177,6 +177,25 @@ class TestInventory(unittest.TestCase):
             _ = inventory.set_user_context(self.token, self.contact_id)
 
 
+class TestCachedInventory(unittest.TestCase):
+    """
+    Provide testing for the CACHED EarthExplorer JSON API
+        (FIXME: this still requires an active memcached session)
+    """
+    @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
+    def setUp(self):
+        self.token = inventory.get_cached_session()  # Initial "real" request
+
+    def tearDown(self):
+        pass
+
+    @patch('api.external.inventory.requests.post', mockinventory.CachedRequestPreventionSpoof)
+    def test_cached_login(self):
+        token = inventory.get_cached_session()
+        self.assertIsInstance(token, basestring)
+
+
 class TestNLAPS(unittest.TestCase):
     """
     Provide testing for sorting out NLAPS products
