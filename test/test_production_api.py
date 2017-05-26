@@ -8,7 +8,7 @@ from api.domain.mocks.user import MockUser
 from api.domain.order import Order, OptionsConversion
 from api.domain.scene import Scene
 from api.domain.user import User
-from api.external.mocks import lta, lpdaac, onlinecache, nlaps, hadoop
+from api.external.mocks import lta, inventory, lpdaac, onlinecache, nlaps, hadoop
 from api.interfaces.production.version1 import API
 from api.notification import emails
 from api.providers.production.mocks.production_provider import MockProductionProvider
@@ -48,7 +48,7 @@ class TestProductionAPI(unittest.TestCase):
         response = api.fetch_production_products(params)
         self.assertTrue('bilbo' in response[0]['orderid'])
 
-    @patch('api.external.lta.get_download_urls', lta.get_download_urls)
+    @patch('api.external.inventory.get_cached_download_urls', inventory.get_cached_download_urls)
     @patch('api.providers.production.production_provider.ProductionProvider.set_product_retry',
            mock_production_provider.set_product_retry)
     def test_fetch_production_products_landsat(self):
