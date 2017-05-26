@@ -44,6 +44,11 @@ RESOURCE_DEF = {
         ],
         "api_version": "1.2.1"
     },
+    'userContext': {
+        "errorCode": None,
+        "error": "",
+        "data": True
+    }
 }
 
 
