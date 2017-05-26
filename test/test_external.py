@@ -149,6 +149,10 @@ class TestInventory(unittest.TestCase):
         success = inventory.set_user_context(self.token, self.contact_id)
         self.assertTrue(success)
 
+    @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    def test_clear_user_context(self):
+        success = inventory.clear_user_context(self.token)
+        self.assertTrue(success)
 
 
 class TestNLAPS(unittest.TestCase):
