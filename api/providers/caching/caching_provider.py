@@ -9,9 +9,9 @@ class CachingProviderException(Exception):
 
 class CachingProvider(CachingProviderInterfaceV0):
 
-    def __init__(self):
+    def __init__(self, timeout=600):
         self.cache = memcache.Client(['127.0.0.1:11211'], debug=0)
-        self.timeout = 600 # 10 minutes
+        self.timeout = timeout  # seconds
 
     def get(self, cache_key):
         return self.cache.get(cache_key)
