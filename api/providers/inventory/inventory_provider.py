@@ -1,6 +1,6 @@
 from api.providers.inventory import InventoryInterfaceV0
 
-from api.external import lta, lpdaac
+from api.external import inventory, lpdaac
 from api import InventoryException
 from api.domain import sensor
 
@@ -44,7 +44,7 @@ class InventoryProviderV0(InventoryInterfaceV0):
 
     @staticmethod
     def check_LTA(prod_ls):
-        return lta.verify_scenes(prod_ls)
+        return inventory.verify_scenes(prod_ls)
 
     @staticmethod
     def check_LPDAAC(prod_ls):
