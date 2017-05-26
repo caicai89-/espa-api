@@ -12,13 +12,10 @@ import memcache
 from api.domain import sensor
 from api.providers.configuration.configuration_provider import (
     ConfigurationProvider)
+from api.providers.caching.caching_provider import CachingProvider
 from api.system.logger import ilogger as logger
 
 
-# TODO: need to profile how much data we are caching
-TWO_HOURS = 7200  # seconds
-MD_KEY_FMT = '({sensor},{date},{path},{row})'  # use comma because date has dash
-cache = memcache.Client(['127.0.0.1:11211'], debug=0)
 config = ConfigurationProvider()
 
 if config.mode in ('dev', 'tst'):
@@ -350,6 +347,42 @@ class LTAService(object):
         return resp.get('data')
 
 
+class LTACachedService(LTAService):
+    """
+    Wrapper on top of the cache, with helper functions which balance requests
+     to the external service when needed.
+    """
+    def __init__(self, *args, **kwargs):
+        super(LTACachedService, self).__init__(*args, **kwargs)
+        # TODO: need to profile how much data we are caching
+        two_hours = 7200  # seconds
+        self.MC_KEY_FMT = '({resource})'
+        self.MD_KEY_FMT = '({resource},{id})'
+        self.cache = CachingProvider(timeout=two_hours)
+
+    # -----------------------------------------------------------------------+
+    # Handlers to format cache keys and perform bulk value fetching/setting  |
+    def get_login(self):
+        cache_key = self.MC_KEY_FMT.format(resource='login')
+        token = self.cache.get(cache_key)
+        return token
+
+    def set_login(self, token):
+        cache_key = self.MC_KEY_FMT.format(resource='login')
+        success = self.cache.set(cache_key, token)
+        if not success:
+            raise LTAError('Token not cached')
+
+    # ---------------------------------------------------------------+
+    # Handlers to balance fetching cached/external values as needed  |
+    def cached_login(self):
+        token = self.get_login()
+        if token is None:
+            token = self.login()
+            self.set_login(token)
+        return token
+
+
 class LTAUser(object):
     def __init__(self, username, password):
         self.api = LTAService()
@@ -488,3 +521,7 @@ def set_user_context(token, contactid, ipaddress=None):
 
 def clear_user_context(token):
     return LTAService(token).clear_user_context()
+
+
+def get_cached_session():
+    return LTACachedService().cached_login()
