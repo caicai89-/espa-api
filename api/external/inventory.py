@@ -48,12 +48,6 @@ class LTAService(object):
         self.ehost = config.url_for('external_cache')
         self.ihost = config.url_for('internal_cache').split(',')[0]
 
-    def __del__(self):
-        if self.current_user:
-            self.logout()
-            self.token = None
-            self.current_user = None
-
     @property
     def base_url(self):
         return self._base_url
