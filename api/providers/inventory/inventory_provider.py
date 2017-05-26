@@ -1,6 +1,6 @@
 from api.providers.inventory import InventoryInterfaceV0
 
-from api.external import inventory, lpdaac
+from api.external import inventory, lpdaac, nlaps
 from api import InventoryException
 from api.domain import sensor
 
@@ -44,6 +44,10 @@ class InventoryProviderV0(InventoryInterfaceV0):
 
     @staticmethod
     def check_LTA(prod_ls):
+        # find all the submitted products that are nlaps and reject them
+        not_avail = nlaps.products_are_nlaps(prod_ls)
+        if not not_avail:
+            raise InventoryException(not_avail)
         token = inventory.get_cached_session()
         return inventory.get_cached_verify_scenes(token, prod_ls)
 
