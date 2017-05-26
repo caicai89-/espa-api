@@ -20,3 +20,15 @@ class CachingProvider(CachingProviderInterfaceV0):
         timeout = expirey or self.timeout
         self.cache.set(cache_key, value, timeout)
         return True
+
+    def get_multi(self, cache_keys):
+        if not isinstance(cache_keys, list):
+            raise TypeError('Cached get multiple keys must list keys')
+        return self.cache.get_multi(cache_keys)
+
+    def set_multi(self, cache_dict, expirey=None):
+        timeout = expirey or self.timeout
+        if not isinstance(cache_dict, dict):
+            raise TypeError('Cache set multiple must be dict (key/value) pairs')
+        self.cache.set_multi(cache_dict, timeout)
+        return True
