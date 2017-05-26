@@ -101,3 +101,8 @@ class BadRequestSpoofNegative(RequestsSpoof):
 
         if 'data' in self.data and isinstance(self.data.get('data'), bool):
             self.data['data'] = not(self.data.get('data'))
+
+
+class CachedRequestPreventionSpoof(object):
+    def __init__(self, *args, **kwargs):
+        raise RuntimeError('Should only require Cached values!')
