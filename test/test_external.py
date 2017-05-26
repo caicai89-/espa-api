@@ -170,6 +170,12 @@ class TestInventory(unittest.TestCase):
         with self.assertRaisesRegexp(inventory.LTAError, expected):
             _ = inventory.get_session()
 
+    @patch('api.external.inventory.requests.get', mockinventory.BadRequestSpoofNegative)
+    def test_false_data_response(self):
+        expected = 'Set user context ESPA failed for user {}'.format(self.contact_id)
+        with self.assertRaisesRegexp(inventory.LTAError, expected):
+            _ = inventory.set_user_context(self.token, self.contact_id)
+
 
 class TestNLAPS(unittest.TestCase):
     """
