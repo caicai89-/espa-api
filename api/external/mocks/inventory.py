@@ -92,3 +92,12 @@ class BadRequestSpoofError(RequestsSpoof):
             self.data['errorCode'] = 'UNKNOWN'
         if 'error' in self.data:
             self.data['error'] = 'A fake server error occurred'
+
+
+class BadRequestSpoofNegative(RequestsSpoof):
+    def __init__(self, *args, **kwargs):
+        super(BadRequestSpoofNegative, self).__init__(*args, **kwargs)
+        self.data = copy.deepcopy(self.data)
+
+        if 'data' in self.data and isinstance(self.data.get('data'), bool):
+            self.data['data'] = not(self.data.get('data'))
