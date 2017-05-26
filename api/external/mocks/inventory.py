@@ -78,3 +78,15 @@ class RequestsSpoof(object):
 
     def raise_for_status(self):
         pass
+
+
+class BadRequestSpoofError(RequestsSpoof):
+    def __init__(self, *args, **kwargs):
+        super(BadRequestSpoofError, self).__init__(*args, **kwargs)
+
+        if 'data' in self.data:
+            self.data['data'] = None
+        if 'errorCode' in self.data:
+            self.data['errorCode'] = 'UNKNOWN'
+        if 'error' in self.data:
+            self.data['error'] = 'A fake server error occurred'
