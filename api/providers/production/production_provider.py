@@ -5,7 +5,7 @@ from api.providers.configuration.configuration_provider import ConfigurationProv
 from api.util.dbconnect import DBConnectException, db_instance
 from api.providers.production import ProductionProviderInterfaceV0
 from api.providers.caching.caching_provider import CachingProvider
-from api.external import lpdaac, lta, onlinecache, nlaps, hadoop
+from api.external import lpdaac, lta, inventory, onlinecache, nlaps, hadoop
 from api.system import errors
 from api.notification import emails
 from api.domain.user import User
@@ -476,7 +476,7 @@ class ProductionProvider(ProductionProviderInterfaceV0):
                          .format(len(landsat), cid))
 
             start = datetime.datetime.now()
-            landsat_urls = lta.get_download_urls(landsat, cid)
+            landsat_urls = inventory.get_cached_download_urls(landsat)
             stop = datetime.datetime.now()
             interval = stop - start
             logger.warn('Retrieving download urls took {0} seconds'
