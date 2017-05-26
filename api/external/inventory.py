@@ -274,6 +274,16 @@ class LTAService(object):
         resp = self._get(endpoint, payload)
         return bool(resp.get('data'))
 
+    def clear_user_context(self):
+        """
+        Clear out current session user context (reverts to auth'd user)
+
+        :return: bool
+        """
+        endpoint = 'clearUserContext'
+        payload = dict(apiKey=self.token)
+        resp = self._get(endpoint, payload)
+        return bool(resp.get('data'))
 
     def fields(self, dataset=''):
         """
@@ -466,5 +476,9 @@ def verify_scenes(token, product_ids):
 def get_download_urls(token, product_ids):
     return LTAService(token).get_download_urls(product_ids)
 
+
 def set_user_context(token, contactid, ipaddress=None):
     return LTAService(token).set_user_context(contactid, ipaddress)
+
+def clear_user_context(token):
+    return LTAService(token).clear_user_context()
