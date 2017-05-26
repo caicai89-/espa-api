@@ -44,7 +44,8 @@ class InventoryProviderV0(InventoryInterfaceV0):
 
     @staticmethod
     def check_LTA(prod_ls):
-        return inventory.verify_scenes(prod_ls)
+        token = inventory.get_cached_session()
+        return inventory.get_cached_verify_scenes(token, prod_ls)
 
     @staticmethod
     def check_LPDAAC(prod_ls):
