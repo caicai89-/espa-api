@@ -164,6 +164,12 @@ class TestInventory(unittest.TestCase):
         with self.assertRaisesRegexp(inventory.LTAError, 'ID Lookup failed'):
             _ = inventory.convert(self.token, ['LC08_L1TP_000000_19000101_00000000_00_T1'])
 
+    @patch('api.external.inventory.requests.post', mockinventory.BadRequestSpoofError)
+    def test_error_code_halt(self):
+        expected = 'UNKNOWN: A fake server error occurred'
+        with self.assertRaisesRegexp(inventory.LTAError, expected):
+            _ = inventory.get_session()
+
 
 class TestNLAPS(unittest.TestCase):
     """
