@@ -9,8 +9,8 @@ class CachingProviderException(Exception):
 
 class CachingProvider(CachingProviderInterfaceV0):
 
-    def __init__(self, timeout=600):
-        self.cache = memcache.Client(['127.0.0.1:11211'], debug=0)
+    def __init__(self, timeout=600, debug=0):
+        self.cache = memcache.Client(['127.0.0.1:11211'], debug=debug)
         self.timeout = timeout  # seconds
 
     def get(self, cache_key):
@@ -18,7 +18,9 @@ class CachingProvider(CachingProviderInterfaceV0):
 
     def set(self, cache_key, value, expirey=None):
         timeout = expirey or self.timeout
-        self.cache.set(cache_key, value, timeout)
+        success = self.cache.set(cache_key, value, timeout)
+        if not success:
+            return False
         return True
 
     def get_multi(self, cache_keys):
@@ -30,5 +32,7 @@ class CachingProvider(CachingProviderInterfaceV0):
         timeout = expirey or self.timeout
         if not isinstance(cache_dict, dict):
             raise TypeError('Cache set multiple must be dict (key/value) pairs')
-        self.cache.set_multi(cache_dict, timeout)
+        failures = self.cache.set_multi(cache_dict, timeout)
+        if failures:
+            return False
         return True
