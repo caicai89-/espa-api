@@ -159,6 +159,11 @@ class TestInventory(unittest.TestCase):
         with self.assertRaisesRegexp(ProductNotImplemented, 'is not a supported sensor product'):
             _ = inventory.convert(self.token, ['bad_id_yo'])
 
+    @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    def test_bad_id_lookup(self):
+        with self.assertRaisesRegexp(inventory.LTAError, 'ID Lookup failed'):
+            _ = inventory.convert(self.token, ['LC08_L1TP_000000_19000101_00000000_00_T1'])
+
 
 class TestNLAPS(unittest.TestCase):
     """
