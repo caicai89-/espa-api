@@ -476,7 +476,8 @@ class ProductionProvider(ProductionProviderInterfaceV0):
                          .format(len(landsat), cid))
 
             start = datetime.datetime.now()
-            landsat_urls = inventory.get_cached_download_urls(landsat)
+            auth_token = inventory.get_cached_session()
+            landsat_urls = inventory.get_cached_download_urls(auth_token, landsat)
             stop = datetime.datetime.now()
             interval = stop - start
             logger.warn('Retrieving download urls took {0} seconds'
