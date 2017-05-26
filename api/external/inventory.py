@@ -272,7 +272,10 @@ class LTAService(object):
         payload = dict(apiKey=self.token, contactId=int(contactid),
                        ipAddress=ipaddress, applicationContext=context)
         resp = self._get(endpoint, payload)
-        return bool(resp.get('data'))
+        if not bool(resp.get('data')):
+            raise LTAError('Set user context {} failed for user {} (ip: {})'
+                           .format(context, contactid, ipaddress))
+        return True
 
     def clear_user_context(self):
         """
@@ -283,7 +286,9 @@ class LTAService(object):
         endpoint = 'clearUserContext'
         payload = dict(apiKey=self.token)
         resp = self._get(endpoint, payload)
-        return bool(resp.get('data'))
+        if not bool(resp.get('data')):
+            raise LTAError('Failed unset user context')
+        return True
 
     def fields(self, dataset=''):
         """
@@ -479,6 +484,7 @@ def get_download_urls(token, product_ids):
 
 def set_user_context(token, contactid, ipaddress=None):
     return LTAService(token).set_user_context(contactid, ipaddress)
+
 
 def clear_user_context(token):
     return LTAService(token).clear_user_context()
