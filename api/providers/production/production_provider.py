@@ -495,43 +495,10 @@ class ProductionProvider(ProductionProviderInterfaceV0):
             for item in cid_items:
                 dload_url = None
                 if item['sensor_type'] == 'landsat':
-                     # check to see if the product is still available
 
-                    if ('status' in landsat_urls[item['name']] and
-                            landsat_urls[item['name']]['status'] != 'available'):
-                        try:
-                            limit = config.get('retry.retry_missing_l1.retries')
-                            timeout = int(config.get('retry.retry_missing_l1.timeout'))
-                            ts = datetime.datetime.now()
-                            after = ts + datetime.timedelta(seconds=timeout)
-                            after = after.strftime('%Y-%m-%d %H:%M:%S.%f')
-
-                            logger.info('{0} for order {1} was oncache '
-                                        'but now unavailable, reordering'
-                                        .format(item['name'], item['orderid']))
-
-                            self.set_product_retry(item['name'],
-                                              item['orderid'],
-                                              'get_products_to_process',
-                                              'product was not available',
-                                              'reorder missing level1 product',
-                                              after, limit)
-                        except Exception:
-
-                            logger.info('Retry limit exceeded for {0} in '
-                                        'order {1}... moving to error status.'
-                                        .format(item['name'], item['orderid']))
-
-                            self.set_product_error(item['name'], item['orderid'],
-                                              'get_products_to_process',
-                                              ('level1 product data '
-                                               'not available after EE call '
-                                               'marked product as available'))
-                            continue
-
-                    if 'download_url' in landsat_urls[item['name']]:
+                    dload_url = landsat_urls.get(item['name'])
+                    if dload_url:
                         logger.info('download_url was in landsat_urls for {0}'.format(item['name']))
-                        dload_url = landsat_urls[item['name']]['download_url']
                         if encode_urls:
                             dload_url = urllib.quote(dload_url, '')
 
