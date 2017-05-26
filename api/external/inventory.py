@@ -387,6 +387,20 @@ class LTACachedService(LTAService):
         if not success:
             raise LTAError('ID conversion not cached')
 
+    def get_download(self, id_list):
+        cache_keys = [self.MD_KEY_FMT.format(resource='download', id=i)
+                      for i in id_list]
+        entries = self.cache.get_multi(cache_keys)
+        entries = {k.split(',')[1][:-1]: v for k, v in entries.items()}
+        return entries
+
+    def set_download(self, id_pairs):
+        cache_keys = {self.MD_KEY_FMT.format(resource='download', id=i): e
+                      for i, e in id_pairs.items()}
+        success = self.cache.set_multi(cache_keys)
+        if not success:
+            raise LTAError('Download URL not cached')
+
     # ---------------------------------------------------------------+
     # Handlers to balance fetching cached/external values as needed  |
     def cached_login(self):
@@ -422,6 +436,19 @@ class LTACachedService(LTAService):
             self.set_lookup(entities)
         results = {k: k in entities.keys() for k in id_list}
         return results
+
+    def cached_get_download_urls(self, id_list):
+        entities = self.get_download(id_list)
+        if len(entities) > 0:
+            diff = set(id_list) - set(entities)
+            if diff:
+                fetched = self.get_download_urls(list(diff))
+                self.set_download(entities)
+                entities.update(fetched)
+        else:
+            entities = self.get_download_urls(id_list)
+            self.set_download(entities)
+        return entities
 
 
 class LTAUser(object):
@@ -574,3 +601,7 @@ def get_cached_convert(token, product_ids):
 
 def get_cached_verify_scenes(token, product_ids):
     return LTACachedService(token).cached_verify_scenes(product_ids)
+
+
+def get_cached_download_urls(token, product_ids):
+    return LTACachedService(token).cached_get_download_urls(product_ids)
