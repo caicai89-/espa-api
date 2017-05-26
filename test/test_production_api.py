@@ -327,87 +327,10 @@ class TestProductionAPI(unittest.TestCase):
         scenes = Scene.where({'failed_lta_status_update IS NOT': None})
         self.assertTrue(len(scenes) == 0)
 
-    @patch('api.providers.production.production_provider.ProductionProvider.handle_submitted_landsat_products',
-           mock_production_provider.respond_true)
-    @patch('api.providers.production.production_provider.ProductionProvider.handle_submitted_modis_products',
-           mock_production_provider.respond_true)
-    @patch('api.providers.production.production_provider.ProductionProvider.handle_submitted_plot_products',
-           mock_production_provider.respond_true)
-    def test_production_handle_submitted_products(self):
-        self.assertTrue(production_provider.handle_submitted_products())
-
-    @patch('api.providers.production.production_provider.ProductionProvider.mark_nlaps_unavailable',
-           mock_production_provider.respond_true)
-    @patch('api.providers.production.production_provider.ProductionProvider.update_landsat_product_status',
-           mock_production_provider.respond_true)
-    @patch('api.providers.production.production_provider.ProductionProvider.get_contactids_for_submitted_landsat_products',
-           mock_production_provider.contact_ids_list)
-    @patch('api.external.lta.check_lta_available', mock_production_provider.respond_true)
-    def test_production_handle_submitted_landsat_products(self):
-        self.assertTrue(production_provider.handle_submitted_landsat_products())
-
-    # !!! need to write test for nlaps.products_are_nlaps !!!
-    @patch('api.external.nlaps.products_are_nlaps', nlaps.products_are_nlaps)
-    @patch('api.providers.production.production_provider.ProductionProvider.set_products_unavailable',
-           mock_production_provider.respond_true)
-    def test_production_mark_nlaps_unavailable(self):
-        order = Order.find(self.mock_order.generate_testing_order(self.user_id))
-        for scene in order.scenes({'name !=': 'plot'}):
-            scene.status = 'submitted'
-            scene.sensor_type = 'landsat'
-            scene.save()
-        self.assertTrue(production_provider.mark_nlaps_unavailable())
-
     @patch('api.external.lta.update_order_status', lta.update_order_status)
     def test_production_set_products_unavailable(self):
         order = Order.find(self.mock_order.generate_testing_order(self.user_id))
         self.assertTrue(production_provider.set_products_unavailable(order.scenes(), "you want a reason?"))
-
-    @patch('api.external.lta.order_scenes', lta.order_scenes)
-    @patch('api.providers.production.production_provider.ProductionProvider.set_products_unavailable',
-           mock_production_provider.respond_true)
-    def test_production_update_landsat_product_status(self):
-        order = Order.find(self.mock_order.generate_testing_order(self.user_id))
-        for scene in order.scenes({'name !=': 'plot'}):
-            scene.status = 'submitted'
-            scene.sensor_type = 'landsat'
-            scene.save()
-        self.assertTrue(production_provider.update_landsat_product_status(User.find(self.user_id).contactid))
-
-    def test_production_get_contactids_for_submitted_landsat_products(self):
-        order = Order.find(self.mock_order.generate_testing_order(self.user_id))
-        for scene in order.scenes({'name !=': 'plot'}):
-            scene.status = 'submitted'
-            scene.sensor_type = 'landsat'
-            scene.save()
-        response = production_provider.get_contactids_for_submitted_landsat_products()
-        self.assertIsInstance(response, set)
-        self.assertTrue(len(response) > 0)
-
-    @patch('api.external.lpdaac.input_exists', lpdaac.input_exists_true)
-    @patch('api.external.lpdaac.LPDAACService.check_lpdaac_available', mock_production_provider.respond_true)
-    def test_production_handle_submitted_modis_products_input_exists(self):
-        # handle oncache scenario
-        order = Order.find(self.mock_order.generate_testing_order(self.user_id))
-        for scene in order.scenes({'name !=': 'plot'}):
-            scene.status = 'submitted'
-            scene.sensor_type = 'modis'
-            scene.save()
-            sid = scene.id
-        self.assertTrue(production_provider.handle_submitted_modis_products())
-        self.assertEquals(Scene.find(sid).status, "oncache")
-
-    @patch('api.external.lpdaac.input_exists', lpdaac.input_exists_false)
-    def test_production_handle_submitted_modis_products_input_missing(self):
-        # handle unavailable scenario
-        order = Order.find(self.mock_order.generate_testing_order(self.user_id))
-        for scene in order.scenes({'name !=': 'plot'}):
-            scene.status = 'submitted'
-            scene.sensor_type = 'modis'
-            scene.save()
-            sid = scene.id
-        self.assertTrue(production_provider.handle_submitted_modis_products())
-        self.assertEquals(Scene.find(sid).status, "unavailable")
 
     def test_production_handle_submitted_plot_products(self):
         order = Order.find(self.mock_order.generate_testing_order(self.user_id))

@@ -81,35 +81,14 @@ class ProductionProviderInterfaceV0(object):
         return
 
     @abc.abstractmethod
-    def handle_onorder_landsat_products(self):
-        ''' handles landsat products still on order '''
-        return
-
-    @abc.abstractmethod
     def send_initial_emails(self):
         ''' sends initial emails '''
         return
 
     @abc.abstractmethod
-    def handle_submitted_landsat_products(self):
-        ''' handles all submitted landsat products '''
-        return
-
-    @abc.abstractmethod
-    def handle_submitted_modis_products(self):
-        ''' Moves all submitted modis products to oncache if true '''
-        return
-
-
-    @abc.abstractmethod
     def handle_submitted_plot_products(self):
         ''' Moves plot products from submitted to oncache status once all
             their underlying rasters are complete or unavailable '''
-        return
-
-    @abc.abstractmethod
-    def handle_submitted_products(self):
-        ''' handles all submitted products in the system '''
         return
 
     @abc.abstractmethod
