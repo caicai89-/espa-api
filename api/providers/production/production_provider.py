@@ -475,17 +475,21 @@ class ProductionProvider(ProductionProviderInterfaceV0):
             logger.warn('Retrieving {0} landsat download urls for cid:{1}'
                          .format(len(landsat), cid))
 
-            start = datetime.datetime.now()
-            auth_token = inventory.get_cached_session()
-            landsat_urls = inventory.get_cached_download_urls(auth_token, landsat)
-            stop = datetime.datetime.now()
-            interval = stop - start
-            logger.warn('Retrieving download urls took {0} seconds'
-                         .format(interval.seconds))
-            logger.warn('Retrieved {0} landsat urls for cid:{1}'.format(len(landsat_urls), cid))
+            landsat_urls = dict()
+            if len(landsat) > 0:
+                start = datetime.datetime.now()
+                auth_token = inventory.get_cached_session()
+                landsat_urls = inventory.get_cached_download_urls(auth_token, landsat)
+                stop = datetime.datetime.now()
+                interval = stop - start
+                logger.warn('Retrieving download urls took {0} seconds'
+                             .format(interval.seconds))
+                logger.warn('Retrieved {0} landsat urls for cid:{1}'.format(len(landsat_urls), cid))
 
             modis = [item['name'] for item in cid_items if item['sensor_type'] == 'modis']
-            modis_urls = lpdaac.get_download_urls(modis)
+            modis_urls = dict()
+            if len(modis) > 0:
+                modis_urls = lpdaac.get_download_urls(modis)
 
             logger.warn('Retrieved {0} modis urls for cid:{1}'.format(len(modis_urls), cid))
             for item in cid_items:
