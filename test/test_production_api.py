@@ -42,7 +42,7 @@ class TestProductionAPI(unittest.TestCase):
     def test_fetch_production_products_modis(self):
         order_id = self.mock_order.generate_testing_order(self.user_id)
         # need scenes with statuses of 'processing'
-        self.mock_order.update_scenes(order_id, 'status', ['processing', 'oncache'])
+        self.mock_order.update_scenes(order_id, 'modis', 'status', ['processing', 'oncache'])
         user = User.find(self.user_id)
         params = {'for_user': user.username, 'product_types': ['modis']}
         response = api.fetch_production_products(params)
@@ -55,7 +55,7 @@ class TestProductionAPI(unittest.TestCase):
     def test_fetch_production_products_landsat(self):
         order_id = self.mock_order.generate_testing_order(self.user_id)
         # need scenes with statuses of 'processing'
-        self.mock_order.update_scenes(order_id, 'status', ['processing', 'oncache'])
+        self.mock_order.update_scenes(order_id, 'landsat', 'status', ['processing', 'oncache'])
         user = User.find(self.user_id)
         params = {'for_user': user.username, 'product_types': ['landsat']}
         response = api.fetch_production_products(params)
@@ -63,7 +63,7 @@ class TestProductionAPI(unittest.TestCase):
 
     def test_fetch_production_products_plot(self):
         order_id = self.mock_order.generate_testing_order(self.user_id)
-        self.mock_order.update_scenes(order_id, 'status', ['complete'])
+        self.mock_order.update_scenes(order_id, ('landsat', 'modis'), 'status', ['complete'])
         order = Order.find(order_id)
         plot_scene = order.scenes({'name': 'plot'})[0]
         plot_scene.name = 'plot'
@@ -268,30 +268,13 @@ class TestProductionAPI(unittest.TestCase):
         order.update('status', 'ordered')
         self.assertTrue(emails.Emails().send_all_initial())
 
-    @patch('api.external.lta.get_order_status', lta.get_order_status)
-    @patch('api.external.lta.update_order_status', lta.update_order_status)
-    def test_production_handle_onorder_landsat_products(self):
-        tram_order_ids = lta.sample_tram_order_ids()[0:3]
-        scene_names = lta.sample_scene_names()[0:3]
-        order = Order.find(self.mock_order.generate_testing_order(self.user_id))
-        scenes = order.scenes()[0:3]
-        for idx, scene in enumerate(scenes):
-            scene.tram_order_id = tram_order_ids[idx]
-            scene.status = 'onorder'
-            # save() doesn't let you update name,
-            # b/c updating a scene name is not acceptable
-            # outside of testing
-            scene.update('name', scene_names[idx])
-            scene.save()
-        self.assertTrue(production_provider.handle_onorder_landsat_products())
-
     def test_production_handle_retry_products(self):
         prev = datetime.datetime.now() - datetime.timedelta(hours=1)
         order_id = self.mock_order.generate_testing_order(self.user_id)
-        self.mock_order.update_scenes(order_id, 'status', ['retry'])
-        self.mock_order.update_scenes(order_id, 'retry_after', [prev])
+        self.mock_order.update_scenes(order_id, 'landsat', 'status', ['retry'])
+        self.mock_order.update_scenes(order_id, 'landsat', 'retry_after', [prev])
         production_provider.handle_retry_products()
-        for s in Scene.where({'order_id': order_id}):
+        for s in Scene.where({'order_id': order_id, 'sensor_type': 'landsat'}):
             self.assertTrue(s.status == 'submitted')
 
     #@patch('api.external.lta.get_available_orders', lta.get_available_orders)
@@ -408,7 +391,7 @@ class TestProductionAPI(unittest.TestCase):
     def test_catch_orphaned_scenes(self):
         order_id = self.mock_order.generate_testing_order(self.user_id)
         # need scenes with statuses of 'queued'
-        self.mock_order.update_scenes(order_id, 'status', ['queued'])
+        self.mock_order.update_scenes(order_id, ('landsat', 'modis', 'plot'), 'status', ['queued'])
         response = production_provider.catch_orphaned_scenes()
         self.assertTrue(response)
 

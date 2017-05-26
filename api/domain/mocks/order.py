@@ -89,8 +89,8 @@ class MockOrder(object):
             db.commit()
         return True
 
-    def update_scenes(self, order_id, attribute, values):
-        scenes = Scene.where({'order_id': order_id})
+    def update_scenes(self, order_id, stype, attribute, values):
+        scenes = Scene.where({'order_id': order_id, 'sensor_type': stype})
         xscenes = chunkify(scenes, len(values))
 
         for idx, value in enumerate(values):
