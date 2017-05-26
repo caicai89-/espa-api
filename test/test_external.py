@@ -186,6 +186,10 @@ class TestCachedInventory(unittest.TestCase):
     @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def setUp(self):
         self.token = inventory.get_cached_session()  # Initial "real" request
+        self.collection_ids = ['LC08_L1TP_156063_20170207_20170216_01_T1',
+                               'LE07_L1TP_028028_20130510_20160908_01_T1',
+                               'LT05_L1TP_032028_20120425_20160830_01_T1']
+        self.entity_ids = inventory.get_cached_convert(self.token, self.collection_ids)
 
     def tearDown(self):
         pass
@@ -194,6 +198,12 @@ class TestCachedInventory(unittest.TestCase):
     def test_cached_login(self):
         token = inventory.get_cached_session()
         self.assertIsInstance(token, basestring)
+
+    @patch('api.external.inventory.requests.get', mockinventory.CachedRequestPreventionSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.CachedRequestPreventionSpoof)
+    def test_cached_lookup(self):
+        entity_ids = inventory.get_cached_convert(self.token, self.collection_ids)
+        self.assertEqual(set(self.collection_ids), set(entity_ids))
 
 
 class TestNLAPS(unittest.TestCase):
