@@ -193,8 +193,7 @@ class LTAService(object):
             if diff:
                 raise LTAError('ID Lookup failed for: {}'.format(diff))
             else:
-                entity_ids = {k: results.get(k).get('entityId')
-                              for k in id_list}
+                entity_ids = {k: results.get(k) for k in id_list}
                 retdata.update(entity_ids)
         return retdata
 
