@@ -145,7 +145,7 @@ class LTAService(object):
         """
         endpoint = 'logout'
         payload = dict(apiKey=self.token)
-        resp = self._get(endpoint, payload)
+        resp = self._post(endpoint, payload)
         if resp.get('data'):
             return True
         else:
@@ -184,7 +184,7 @@ class LTAService(object):
             payload = dict(apiKey=self.token,
                            idList=id_list,
                            inputField='displayId', datasetName=sensor_name)
-            resp = self._get(endpoint, payload)
+            resp = self._post(endpoint, payload)
             results = resp.get('data')
             if not isinstance(results, dict):
                 raise LTAError('{} ID Lookup failed: {}'
@@ -235,7 +235,7 @@ class LTAService(object):
             ents = [entity_ids.get(i) for i in id_list]
             payload = dict(apiKey=self.token, datasetName=sensor_name,
                            products=products, node=self.node, entityIds=ents)
-            resp = self._get(endpoint, payload)
+            resp = self._post(endpoint, payload)
             results = resp.get('data')
             if not isinstance(results, list):
                 raise LTAError('{} failed fetch download urls: {}'
@@ -262,7 +262,7 @@ class LTAService(object):
         endpoint = 'userContext'
         payload = dict(apiKey=self.token, contactId=int(contactid),
                        ipAddress=ipaddress, applicationContext=context)
-        resp = self._get(endpoint, payload)
+        resp = self._post(endpoint, payload)
         if not bool(resp.get('data')):
             raise LTAError('Set user context {} failed for user {} (ip: {})'
                            .format(context, contactid, ipaddress))
@@ -276,7 +276,7 @@ class LTAService(object):
         """
         endpoint = 'clearUserContext'
         payload = dict(apiKey=self.token)
-        resp = self._get(endpoint, payload)
+        resp = self._post(endpoint, payload)
         if not bool(resp.get('data')):
             raise LTAError('Failed unset user context')
         return True
