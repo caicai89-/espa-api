@@ -83,20 +83,23 @@ class TestInventory(unittest.TestCase):
 
     @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_api_available(self):
-        self.assertTrue(inventory.available())
+        self.assertTrue(inventory.available(self.token))
 
     @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_api_id_lookup(self):
         entity_ids = inventory.convert(self.token, self.collection_ids)
         self.assertEqual(set(self.collection_ids), set(entity_ids))
 
     @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_api_validation(self):
         expected = {k: True for k in self.collection_ids}
         results = inventory.verify_scenes(self.token, self.collection_ids)
         self.assertItemsEqual(expected, results)
 
     @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_api_get_download_urls(self):
         results = inventory.get_download_urls(self.token, self.collection_ids)
         self.assertIsInstance(results, dict)
@@ -108,11 +111,13 @@ class TestInventory(unittest.TestCase):
             self.assertRegexpMatches(results.get(pid), ip_address_host_regex)
 
     @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_set_user_context(self):
         success = inventory.set_user_context(self.token, self.contact_id)
         self.assertTrue(success)
 
     @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_clear_user_context(self):
         success = inventory.clear_user_context(self.token)
         self.assertTrue(success)
@@ -122,6 +127,7 @@ class TestInventory(unittest.TestCase):
             _ = inventory.convert(self.token, ['bad_id_yo'])
 
     @patch('api.external.inventory.requests.get', mockinventory.RequestsSpoof)
+    @patch('api.external.inventory.requests.post', mockinventory.RequestsSpoof)
     def test_bad_id_lookup(self):
         with self.assertRaisesRegexp(inventory.LTAError, 'ID Lookup failed'):
             _ = inventory.convert(self.token, ['LC08_L1TP_000000_19000101_00000000_00_T1'])
@@ -133,6 +139,7 @@ class TestInventory(unittest.TestCase):
             _ = inventory.get_session()
 
     @patch('api.external.inventory.requests.get', mockinventory.BadRequestSpoofNegative)
+    @patch('api.external.inventory.requests.post', mockinventory.BadRequestSpoofNegative)
     def test_false_data_response(self):
         expected = 'Set user context ESPA failed for user {}'.format(self.contact_id)
         with self.assertRaisesRegexp(inventory.LTAError, expected):
