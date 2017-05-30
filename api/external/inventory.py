@@ -240,7 +240,8 @@ class LTAService(object):
                 raise LTAError('{} failed fetch download urls: {}'
                                .format(sensor_name, product_ids))
             urls = {i: [r.replace(self.ehost, self.ihost) for r in results
-                        if entity_ids.get(i) in r].pop() for i in id_list}
+                        if entity_ids.get(i) in r] for i in id_list}
+            urls = {i: v for i, v in urls.items() if len(v) == 1}
             diff = set(id_list) - set(urls)
             if diff:
                 raise LTAError('No download urls found for: {}'.format(diff))
