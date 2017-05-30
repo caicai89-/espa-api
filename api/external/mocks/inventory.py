@@ -5,33 +5,21 @@ RESOURCE_DEF = {
         "errorCode": None,
         "error": "",
         "data": "2fd976601eef1ebd632b545a8fef11a3",
-        "api_version": "1.2.1"
+        "api_version": "1.4.0"
     },
     'logout': {
         "errorCode": None,
         "error": "",
         "data": True,
-        "api_version": "1.2.1"
+        "api_version": "1.4.0"
     },
     'idLookup': {
         "errorCode": None,
         "error": "",
         "data": {
-            "LC08_L1TP_156063_20170207_20170216_01_T1": {
-                "entityId": "LC81560632017038LGN00",
-                "dispalyId": "LC08_L1TP_156063_20170207_20170216_01_T1",
-                "orderingId": "LC81560632017038LGN00",
-            },
-            "LE07_L1TP_028028_20130510_20160908_01_T1": {
-                "entityId": "LE70280282013130EDC00",
-                "dispalyId": "LE07_L1TP_028028_20130510_20160908_01_T1",
-                "orderingId": "LE70280282013130EDC00",
-            },
-            "LT05_L1TP_032028_20120425_20160830_01_T1" : {
-                    "entityId": "LT50320282012116EDC00",
-                    "dispalyId": "LT05_L1TP_032028_20120425_20160830_01_T1",
-                    "orderingId": "LT50320282012116EDC00",
-            },
+            "LC08_L1TP_156063_20170207_20170216_01_T1": "LC81560632017038LGN00",
+            "LE07_L1TP_028028_20130510_20160908_01_T1": "LE70280282013130EDC00",
+            "LT05_L1TP_032028_20120425_20160830_01_T1": "LT50320282012116EDC00",
             "INVALID_ID": None
         }
     },
@@ -43,7 +31,7 @@ RESOURCE_DEF = {
             "http://invalid.com/path/to/downloads/l1/2014/013/029/LE70280282013130EDC00.tar.gz?iid=LE70280282013130EDC00&amp;did=63173803&amp;ver="
             "http://invalid.com/path/to/downloads/l1/2014/013/029/LT50320282012116EDC00.tar.gz?iid=LT50320282012116EDC00&amp;did=63173803&amp;ver="
         ],
-        "api_version": "1.2.1"
+        "api_version": "1.4.0"
     },
     'userContext': {
         "errorCode": None,
