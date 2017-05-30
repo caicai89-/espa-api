@@ -557,8 +557,8 @@ def get_session():
     return LTAService().login()
 
 
-def available():
-    return LTAService().available()
+def available(token):
+    return LTAService(token).available()
 
 
 def logout(token):
