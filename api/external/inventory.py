@@ -42,7 +42,6 @@ class LTAService(object):
         self.agent_wurd = config.get('bulk.{0}.json.password'.format(mode))
         self.current_user = None
         self.token = token
-        self.node = 'EE'  # EarthExplorer
 
         # FIXME: what is the correct download location? using zero-index a.t.m.
         self.ehost = config.url_for('external_cache')
@@ -121,7 +120,7 @@ class LTAService(object):
         """
         endpoint = 'login'
         payload = dict(username=self.agent, password=self.agent_wurd,
-                       authType='EROS')
+                       authType='EROS', catalogId='EE')
         resp = self._post(endpoint, payload)
         return resp.get('data')
 
