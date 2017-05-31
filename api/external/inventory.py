@@ -267,6 +267,7 @@ class LTAService(object):
         if not bool(resp.get('data')):
             raise LTAError('Set user context {} failed for user {} (ip: {})'
                            .format(context, contactid, ipaddress))
+        self.current_user = contactid
         return True
 
     def clear_user_context(self):
@@ -280,6 +281,7 @@ class LTAService(object):
         resp = self._post(endpoint, payload)
         if not bool(resp.get('data')):
             raise LTAError('Failed unset user context')
+        self.current_user = None
         return True
 
     def fields(self, dataset=''):
