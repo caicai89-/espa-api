@@ -172,92 +172,92 @@ class Modis11A1(Modis):
 
 class ModisTerra09A1(Terra, Modis09A1):
     """models modis 09A1 from Terra"""
-    pass
+    lta_json_name = 'MODIS_MOD09A1'
 
 
 class ModisTerra09GA(Terra, Modis09GA):
     """models modis 09GA from Terra"""
-    pass
+    lta_json_name = 'MODIS_MOD09GA'
 
 
 class ModisTerra09GQ(Terra, Modis09GQ):
     """models modis 09GQ from Terra"""
-    pass
+    lta_json_name = 'MODIS_MOD09GQ'
 
 
 class ModisTerra09Q1(Terra, Modis09Q1):
     """models modis 09Q1 from Terra"""
-    pass
+    lta_json_name = 'MODIS_MOD09Q1'
 
 
 class ModisTerra13A1(Terra, Modis13A1):
     """models modis 13A1 from Terra"""
-    pass
+    lta_json_name = 'MODIS_MOD13A1'
 
 
 class ModisTerra13A2(Terra, Modis13A2):
     """models modis 13A2 from Terra"""
-    pass
+    lta_json_name = 'MODIS_MOD13A2'
 
 
 class ModisTerra13A3(Terra, Modis13A3):
     """models modis 13A3 from Terra"""
-    pass
+    lta_json_name = 'MODIS_MOD13A3'
 
 
 class ModisTerra13Q1(Terra, Modis13Q1):
     """models modis 13Q1 from Terra"""
-    pass
+    lta_json_name = 'MODIS_MOD13Q1'
 
 
 class ModisTerra11A1(Terra, Modis11A1):
     """models modis 11A1 from Terra"""
-    pass
+    lta_json_name = 'MODIS_MOD11A1'
 
 
 class ModisAqua09A1(Aqua, Modis09A1):
     """models modis 09A1 from Aqua"""
-    pass
+    lta_json_name = 'MODIS_MYD09A1'
 
 
 class ModisAqua09GA(Aqua, Modis09GA):
     """models modis 09GA from Aqua"""
-    pass
+    lta_json_name = 'MODIS_MYD09GA'
 
 
 class ModisAqua09GQ(Aqua, Modis09GQ):
     """models modis 09GQ from Aqua"""
-    pass
+    lta_json_name = 'MODIS_MYD09GQ'
 
 
 class ModisAqua09Q1(Aqua, Modis09Q1):
     """models modis 09Q1 from Aqua"""
-    pass
+    lta_json_name = 'MODIS_MYD09Q1'
 
 
 class ModisAqua13A1(Aqua, Modis13A1):
     """models modis 13A1 from Aqua"""
-    pass
+    lta_json_name = 'MODIS_MYD13A1'
 
 
 class ModisAqua13A2(Aqua, Modis13A2):
     """models modis 13A2 from Aqua"""
-    pass
+    lta_json_name = 'MODIS_MYD13A2'
 
 
 class ModisAqua13A3(Aqua, Modis13A3):
     """models modis 13A3 from Aqua"""
-    pass
+    lta_json_name = 'MODIS_MYD13A3'
 
 
 class ModisAqua13Q1(Aqua, Modis13Q1):
     """models modis 13Q1 from Aqua"""
-    pass
+    lta_json_name = 'MODIS_MYD13Q1'
 
 
 class ModisAqua11A1(Aqua, Modis11A1):
     """models modis 11A1 from Aqua"""
-    pass
+    lta_json_name = 'MODIS_MYD11A1'
 
 
 class Landsat(SensorProduct):
