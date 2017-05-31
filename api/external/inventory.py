@@ -212,7 +212,7 @@ class LTAService(object):
         results = {k: k in entity_ids.keys() for k in product_ids}
         return results
 
-    def get_download_urls(self, product_ids, products='STANDARD'):
+    def get_download_urls(self, product_ids, products='STANDARD', stage=False):
         """
         Fetch the download location for supplied IDs, replacing the public host
             with an internal network host (to bypass public firewall routing)
@@ -221,6 +221,8 @@ class LTAService(object):
         :type product_ids: list
         :param products: download type to grab (STANDARD is for L1-GeoTIFF)
         :type products: str
+        :param stage: If true, initiates a data stage command
+        :type stage: bool
         :return: dict
         """
         dataset_groups = self.split_by_dataset(product_ids)
@@ -232,7 +234,7 @@ class LTAService(object):
             id_list = dataset_groups[sensor_name]
             ents = [entity_ids.get(i) for i in id_list]
             payload = dict(apiKey=self.token, datasetName=sensor_name,
-                           products=products, node=self.node, entityIds=ents)
+                           products=products, entityIds=ents, stage=stage)
             resp = self._post(endpoint, payload)
             results = resp.get('data')
             if not isinstance(results, list):
