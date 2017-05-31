@@ -352,10 +352,10 @@ class LTACachedService(LTAService):
     def __init__(self, *args, **kwargs):
         super(LTACachedService, self).__init__(*args, **kwargs)
         # TODO: need to profile how much data we are caching
-        two_hours = 7200  # seconds
+        one_hour = 3600  # seconds
         self.MC_KEY_FMT = '({resource})'
         self.MD_KEY_FMT = '({resource},{id})'
-        self.cache = CachingProvider(timeout=two_hours)
+        self.cache = CachingProvider(timeout=one_hour)
 
     # -----------------------------------------------------------------------+
     # Handlers to format cache keys and perform bulk value fetching/setting  |
